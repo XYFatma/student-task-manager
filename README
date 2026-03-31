@@ -1,0 +1,49 @@
+# Student Task Manager
+
+**Submitted by:** Jennifer Wilson, Fatma Mercimek, Rabia Sharifi, Nosh Syed and Venkata Srivani Yeduru
+**Course:** CST8319
+**Date:** March 31, 2026
+
+---
+
+## Description
+
+The objective of this project is to create a web application to allow students to organize and track their academic tasks. 
+The project allows users to manage their tasks using Java Servlets and a MySQL database.
+
+---
+
+## System Requirements
+
+- Eclipse IDE for Enterprise Java Developers
+
+- Apache Tomcat 10.x
+
+- MySQL 8 or higher
+
+---
+
+## Installation Guide
+
+### 1. Database Setup
+
+1. Open MySQL Workbench.
+
+2. Open and execute student_task_manager_db.sql to create the database and insert a test user.
+
+3. Open DatabaseConnection.java.
+
+4. Update PASSWORD to your MySQL root password.
+
+5. Verify that mysql-connector-j-9.6.0.jar is in WEB-INF/lib.
+	If not present, download from: https://www.mysql.com/products/connector/
+
+### 2. Executing the App
+
+1. Right click project -> Run As -> Run on Server.
+
+2. Select Tomcat 10.
+
+3. In your browser, go to http://localhost:8080/student-task-manager/index.html
+
+
