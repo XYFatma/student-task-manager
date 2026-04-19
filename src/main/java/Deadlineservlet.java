@@ -3,76 +3,69 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
+ 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-
-@WebServlet("/viewTasks")
-public class ViewDeliverableServlet extends HttpServlet {
-
+ 
+@WebServlet("/deadlines")
+public class DeadlineServlet extends HttpServlet {
+ 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+ 
+        HttpSession session = request.getSession(false);
+        int studentID = (int) session.getAttribute("studentID");
+ 
         TaskManager tm = new TaskManager();
-        List<Deliverable> task = tm.getAllDeliverables();
-
+        List<Deliverable> upcoming = tm.getUpcomingDeadlines(studentID, 7);
+ 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-
-        out.println("<h1>All Tasks</h1>");
-
-        if (task.isEmpty()) {
-            out.println("<p>No tasks found.</p>");
-            out.println("<a href='index.html'>Home Page</a>");
+ 
+        out.println("<h1>Upcoming Deadlines (Next 7 Days)</h1>");
+ 
+        if (upcoming.isEmpty()) {
+            out.println("<p>No upcoming deadlines in the next 7 days.</p>");
         } else {
+            LocalDate today = LocalDate.now();
+ 
             out.println("<table style='border-spacing: 15px'>");
             out.println("<tr>");
             out.println("<th>Title</th>");
-            out.println("<th>Description</th>");
             out.println("<th>Due Date</th>");
             out.println("<th>Days Left</th>");
             out.println("<th>Status</th>");
             out.println("</tr>");
-
-            LocalDate today = LocalDate.now();
-
-            for (Deliverable d : task) {
+ 
+            for (Deliverable d : upcoming) {
                 LocalDate dueDate = d.getDueDate().toLocalDate();
                 long daysLeft = ChronoUnit.DAYS.between(today, dueDate);
-
+ 
                 String urgencyLabel;
                 String rowColor;
-
-                if (daysLeft < 0) {
-                    urgencyLabel = "Overdue";
+ 
+                if (daysLeft <= 3) {
+                    urgencyLabel = daysLeft + " day(s) &#128308; Urgent";
                     rowColor = "#ffcccc";
-                } else if (daysLeft <= 3) {
-                    urgencyLabel = daysLeft + " day(s) left &#128308;";
-                    rowColor = "#ffcccc";
-                } else if (daysLeft <= 7) {
-                    urgencyLabel = daysLeft + " day(s) left &#128993;";
-                    rowColor = "#fff3cc";
                 } else {
-                    urgencyLabel = daysLeft + " day(s) left &#128994;";
-                    rowColor = "#ffffff";
+                    urgencyLabel = daysLeft + " day(s) &#128993; Soon";
+                    rowColor = "#fff3cc";
                 }
-
+ 
                 out.println("<tr style='background-color:" + rowColor + "'>");
                 out.println("<td>" + d.getTitle() + "</td>");
-                out.println("<td>" + d.getDescription() + "</td>");
                 out.println("<td>" + d.getDueDate() + "</td>");
                 out.println("<td>" + urgencyLabel + "</td>");
                 out.println("<td>" + d.getStatus() + "</td>");
-                out.println("<td><a href='editTask?id=" + d.getDeliverableID() + "'>Edit</a></td>");
-                out.println("<td><a href='deleteTask?id=" + d.getDeliverableID() + "'>Delete</a></td>");
                 out.println("</tr>");
             }
-
+ 
             out.println("</table>");
-            out.println("<br><a href='deadlines'>View Upcoming Deadlines</a>");
-            out.println("<br><a href='index.html'>Home Page</a>");
         }
+ 
+        out.println("<br><a href='viewTasks'>Back to All Tasks</a>");
+        out.println("<br><a href='index.html'>Home Page</a>");
     }
 }
  
